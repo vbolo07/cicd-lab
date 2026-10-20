@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Wait for application health
         env:
-          BASE_URL: https://cicd-lab-kqpq.onrender.com/
+          BASE_URL: https://cicd-lab-kqpq.onrender.com
         run: |
           set -euo pipefail
 
