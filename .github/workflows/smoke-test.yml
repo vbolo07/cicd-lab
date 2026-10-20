@@ -1,0 +1,48 @@
+
+name: Post-deployment smoke test
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    name: Check deployed application
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Wait for application health
+        env:
+          BASE_URL: https://cicd-lab-kqpq.onrender.com/
+        run: |
+          set -euo pipefail
+
+          for attempt in $(seq 1 24); do
+            echo "Health check attempt $attempt of 24"
+
+            if response=$(curl \
+              --fail \
+              --silent \
+              --show-error \
+              --max-time 10 \
+              "$BASE_URL/api/health" 2>/dev/null); then
+
+              if echo "$response" | jq -e \
+                '.status == "ok"' >/dev/null; then
+                echo "Smoke test passed: $response"
+                exit 0
+              fi
+            fi
+
+            sleep 5
+          done
+
+          echo "Smoke test failed: application did not become healthy"
+          exit 1
