@@ -31,6 +31,17 @@ after(() => {
   server.close();
 });
 
+test('GET / returns the homepage', async () => {
+  const response = await fetch(`${baseUrl}/`);
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type') ?? '', /text\/html/);
+
+  const html = await response.text();
+
+  assert.match(html, /CI\/CD Lab/);
+  assert.match(html, /The application is running/);
+});
 test('GET /api/health returns a healthy response', async () => {
   const response = await fetch(`${baseUrl}/api/health`);
 
