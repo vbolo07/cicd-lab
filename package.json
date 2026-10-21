@@ -13,7 +13,7 @@
     "test:coverage": "c8 --include='src/**/*.ts' --reporter=text --reporter=html node --import tsx --test test/app.test.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "verify": "npm run lint && npm run typecheck && npm test:coverage && npm run build"
+    "verify": "npm run lint && npm run typecheck && npm run test:coverage && npm run build"
   },
   "keywords": [],
   "author": "",
