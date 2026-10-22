@@ -13,9 +13,7 @@ The starter includes a home page, a health endpoint, and a passing health endpoi
 ## Get started
 
 Clone the starter into a new folder:
-
-```bash
-git clone https://github.com/bradtraversy/cicd-lab-starter.git cicd-lab
+git clone ......... cicd-lab
 cd cicd-lab
 npm ci
 ```

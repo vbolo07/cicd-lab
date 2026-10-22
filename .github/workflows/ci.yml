@@ -19,7 +19,7 @@ jobs:
   verify:
     name: Verify
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository code
@@ -39,3 +39,6 @@ jobs:
 
       - name: Verify application
         run: npm run verify
+      
+      - name: Build Docker image
+        run: docker build --tag cicd-lab:ci .
