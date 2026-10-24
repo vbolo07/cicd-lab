@@ -1,4 +1,4 @@
-name: Publish container image and deploy to Render
+name: Publish container image
 
 on:
   push:
