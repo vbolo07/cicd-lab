@@ -1,4 +1,4 @@
-name: Publish container image
+name: Publish container image and deploy to Render
 
 on:
   push:
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   publish:
-    name: Build and publish to GHCR
+    name: Build and publish to GHCR and Trigger Render Deployment
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -62,3 +62,27 @@ jobs:
           set -euo pipefail
           echo "Published image: ${IMAGE}:${TAG}"
           echo "Immutable image reference: ${IMAGE}@${DIGEST}"
+      
+      - name: Trigger Render deployment
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          IMAGE: ghcr.io/${{ github.repository }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Missing RENDER_DEPLOY_HOOK_URL secret"
+            exit 1
+          fi
+
+          IMAGE_URL="${IMAGE}@${DIGEST}"
+
+          echo "Triggering Render deployment for the published digest"
+
+          curl --fail --silent --show-error \
+            --get \
+            --data-urlencode "imgURL=${IMAGE_URL}" \
+            "$RENDER_DEPLOY_HOOK_URL"
+
+          echo "Render accepted the deployment request."
